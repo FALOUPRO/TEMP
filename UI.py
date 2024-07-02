@@ -31,7 +31,6 @@ class UIControl(QMainWindow):
         self.show()  # 显示窗口
 
       def drawtable(self, result_df):
-        super().__init__()
         # 创建一个 QTableView
         table_view = QTableView()
 

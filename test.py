@@ -1,34 +1,20 @@
-import sys
-import pytest
-from PyQt5.QtWidgets import QApplication
-from PyQt5.QtTest import QTest
-from PyQt5.QtCore import Qt
-from UI import UIControl  # 假设UI.py中的类名为UIControl
-import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
+from matplotlib.cm import get_cmap
 
-@pytest.fixture(scope="module")
-def app():
-    return QApplication(sys.argv)
+# 创建极坐标图
+fig, ax = plt.subplots(subplot_kw={'projection': 'polar'})
 
-@pytest.fixture
-def ui_control():
-    # 创建测试数据
-    data = {'Angle': [0, 45, 90], 'MAXLOAD': [100, 150, 200]}
-    df = pd.DataFrame(data)
-    return UIControl(df)
+# 生成数据
+theta = np.linspace(0, 2.*np.pi, 100)
+r = np.abs(np.sin(5*theta))
 
-def test_table_view(app, ui_control):
-    # 验证表格视图是否正确显示数据
-    model = ui_control.table_view.model()
-    assert model.rowCount() == 3  # 假设有3行数据
-    assert model.columnCount() == 2  # 假设有2列数据
-    assert model.data(model.index(0, 0)) == '0'  # 验证第一行第一列的数据
+# 使用colormap生成颜色数组
+cmap = get_cmap('viridis')  # 选择colormap
+colors = cmap(np.linspace(0, 1, len(theta)))
 
-def test_graph(app, ui_control):
-    # 验证图表是否被创建
-    assert ui_control.widget is not None
-    # 更详细的图表测试可以根据实际情况添加
+# 绘制变色填充
+for i in range(len(theta)-1):
+    ax.fill_between(theta[i:i+2], 0, r[i:i+2], color=colors[i], alpha=0.7)
 
-# 运行pytest进行测试
-if __name__ == "__main__":
-    pytest.main([__file__])
+plt.show()
